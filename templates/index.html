@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="main_content_box">
+    <img src="https://jamesg.blog/assets/coffeeshop.jpg" height="100" width="100" class="u-logo" alt="James sitting in a coffee shop, happily staring at a cup of coffee.">
+    <h1>Welcome to the Cali Home Page</h1>
+    <p>Cali is a Discord bot run by <a href="https://jamesg.blog">jamesg.blog</a>.</p>
+    <p>Cali connects with services like IndieWeb Search and jamesg.blog's personal blog infrastructure to send reminders and notifications via Discord.</p>
+    <p>Here are a few examples of what Cali can do:</p>
+    <ul>
+        <li>Send a URL for an IndieWeb Search query.</li>
+        <li>Respond to a few keyword phrases like "make a sandwich" and "yay".</li>
+        <li>Post to a personal website that supports Micropub (as long as you provide an authentication token when setting up the bot).</li>
+        <li>And more...</li>
+    </ul>
+    <h2>Can I use Cali?</h2>
+    <p>Cali is not currently used in any public channels so you cannot interact directly with Cali.</p>
+    <p>You can find the code powering Cali on the <a href="https://github.com/capjamesg/cali">project GitHub repository</a>.</p>
+    <p>To add a new command to the Cali bot, add an entry to the process_command.py file that meets your needs.</p>
+    <p>All of the functions currently in use are available in that file.</p>
+</section>
+{% endblock %}
