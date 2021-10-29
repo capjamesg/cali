@@ -63,4 +63,4 @@ This project is licensed under the MIT license.
 
 ## Maintainers
 
-- capjamesg# cali
+- capjamesg

@@ -28,8 +28,8 @@ async def on_message(message):
 
     to_send = process_command(message.content, karma)
 
-    # tag user in all messages
-    await message.channel.send(DISCORD_USERNAME + " " + to_send)
+    # consider tagging user in all messages with DISCORD_USERNAME + " "
+    await message.channel.send(to_send)
 
 if __name__ == '__main__':
 	client.run(DISCORD_BOT_TOKEN)

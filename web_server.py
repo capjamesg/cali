@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from config import API_KEY, DISCORD_POST_WEBHOOK
 import requests
 
@@ -30,6 +30,26 @@ def webhook():
 	requests.post(DISCORD_POST_WEBHOOK, data=data)
 
 	return jsonify({"message": "message_sent"}), 200
+
+@app.errorhandler(404)
+def page_not_found(e):
+	return render_template("error.html", error_type="404", title="Page not found error"), 404
+
+@app.errorhandler(500)
+def server_error(e):
+	return render_template("error.html", error_type="500", title="Server error"), 500
+
+@app.route("/styles.css")
+def css_styles():
+    return send_from_directory(app.static_folder, "styles.css")
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(app.static_folder, "robots.txt")
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(app.static_folder, "favicon.ico")
 
 if __name__ == "__main__":
 	app.run()
