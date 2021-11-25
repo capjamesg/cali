@@ -1,6 +1,8 @@
 from process_command import process_command
 from config import *
 import discord
+import random
+import time
 import json
 import os
 
@@ -27,6 +29,11 @@ async def on_message(message):
         return
 
     to_send = process_command(message.content, karma)
+
+    # make cali feel more human-like by delaying messages
+    random_number = random.randint(3, 15)
+
+    time.sleep(random_number)
 
     # consider tagging user in all messages with DISCORD_USERNAME + " "
     await message.channel.send(to_send)

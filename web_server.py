@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
-from config import API_KEY, DISCORD_POST_WEBHOOK
+from flask import Blueprint, request, jsonify, render_template, send_from_directory
+from .config import API_KEY, DISCORD_POST_WEBHOOK
 import requests
 
-app = Flask(__name__)
+app = Blueprint("web_server", __name__, template_folder="templates")
 
 @app.route('/')
 def index():
@@ -14,22 +14,28 @@ def webhook():
 	# error = "error"
 	# success = "message"
 
-	if not request.headers.get("authentication") or request.headers.get("authentication").replace("Bearer: ", "") != API_KEY:
+	if not request.headers.get("authorization") or request.headers.get("authorization").replace("Bearer", "").strip() != API_KEY:
 		return jsonify({"error": "not_authorized"}), 403
 
-	data = request.get_json()
-
-	if not data.get("message"):
+	if not request.form.get("message"):
 		return jsonify({"error": "invalid_request"}), 400
 
 	data = {
 		"username": "calibot",
-		"content": data["message"]
+		"content": request.form["message"]
 	}
 
 	requests.post(DISCORD_POST_WEBHOOK, data=data)
 
 	return jsonify({"message": "message_sent"}), 200
+
+# disabled as Cali is used as a Discord bot most of the time
+# @app.route("/chat")
+# def chat_interface():
+# 	if not session.get("me"):
+# 		return jsonify({"error": "not_authorized"}), 403
+
+# 	return render_template("chat.html")
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -50,6 +56,3 @@ def robots():
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(app.static_folder, "favicon.ico")
-
-if __name__ == "__main__":
-	app.run()

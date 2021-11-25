@@ -12,7 +12,11 @@ def process_command(message, day_karma):
 		return "pong"
 	elif "++" in message or "--" in message:
 		get_plus_plus_target = message.split(" ")
-		target = [x for x in get_plus_plus_target if x.endswith("++")]
+
+		if "++" in message:
+			target = [x for x in get_plus_plus_target if x.endswith("++")]
+		else:
+			target = [x for x in get_plus_plus_target if x.endswith("--")]
 
 		original_target = target[0]
 
@@ -30,7 +34,7 @@ def process_command(message, day_karma):
 				if "++" in original_target:
 					day_karma[target[0]]["karma"] += 1
 				else:
-					day_karma[target[0]]["karma"] -= -1
+					day_karma[target[0]]["karma"] -= 1
 			else:
 				day_karma[target[0]] = {
 					"date": todays_date,
@@ -75,8 +79,9 @@ def process_command(message, day_karma):
 			return "coffee coffee coffee"
 	elif message.startswith("tell me a joke"):
 		return "my friend xkcd is going to take over on this one: https://c.xkcd.com/random/comic/"
-	elif message.startswith("morning") or message.startswith("good morning") or message.startswith("hello cali") \
-		 or message.startswith("hi") or message.startswith("what's up") or message.startswith("howdy"):
+	elif message.startswith("morning") or message.startswith("good morning") or message.startswith("hello") \
+		 or message.startswith("hi") or message.startswith("what's up") or message.startswith("howdy") \
+		 or message.startswith("hello") or message.startswith("sup") or message.startswith("yo"):
 		return "morning!"
 	elif message.startswith("cali"):
 		return "yep! i'm here!"
@@ -142,7 +147,7 @@ def process_command(message, day_karma):
 	elif message.startswith("yay") or message.startswith("amazing") or message.startswith("cool") or message.startswith("terrific"):
 		return "yay!"
 	else:
-		return "i don't understand"
+		return ""
 
 def make_micropub_request(post_type, message, category):
 	if post_type == "in-reply-to":
@@ -186,4 +191,4 @@ def make_micropub_request(post_type, message, category):
 		location = r.headers["Location"]
 		return "your post was successfully sent to " + location
 	else:
-		return "there was an error sending your post: " + r.text
+		return "there was an error sending your post"

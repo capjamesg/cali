@@ -17,7 +17,10 @@ main {
 p, code, li {
 	font-size: 1.0625rem;
 	word-wrap: break-word;
-  }
+}
+dt {
+	font-weight: 600;
+}
 nav {
 	display: flex;
 	justify-content: space-between;
@@ -48,7 +51,7 @@ a {
 p, h1, h2, h3 {
 	line-height: 1.5em;
 }
-a:focus {
+a:focus, summary:focus {
 	background-color: #006BD6;
 	color: white;
 	outline: lightblue 2px;
@@ -149,4 +152,8 @@ pre {
   background-color: white;
   border: 2.5px dotted orange;
   padding: 2.5px;
+}
+nav ul li {
+    display: inline-block;
+    padding-left: 10px;
 }

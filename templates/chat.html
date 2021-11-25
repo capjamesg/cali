@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script>
+    var socket = new WebSocket("ws://localhost:8765");
+    socket.onopen = function(event) {
+        socket.addEventListener("message", ({ data }) => {
+            var new_li = document.createElement("li");
+            var messages = document.getElementById("messages");
+            data = data.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            if (data.startsWith("[cali]: ")) {
+                new_li.innerHTML = "<span class='cali'>[cali]</span>: " + data.substring(7);
+            } else {
+                new_li.innerText = data;
+            }
+            messages.appendChild(new_li);
+            messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+        });
+        socket.send("connect");
+    };
+    socket.onerror = function(event) {
+        var new_li = document.createElement("li");
+        var messages = document.getElementById("messages");
+        new_li.innerText = "[system]: A connection could not be established to the server."
+        messages.appendChild(new_li);
+        messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+    };
+</script>
+<style>
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .main_content_box {
+        max-width: 35em;
+        margin: auto;
+    }
+    .main_content_box ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    #messages {
+        border: 1px solid lightgrey;
+        padding: 10px;
+        height: 300px;
+        overflow: scroll;
+    }
+</style>
+<section class="main_content_box">
+    <h1>Calibot 🤖</h1>
+    <p>Use the form below to interact with Cali.</p>
+    <h2>Chat</h2>
+    <ul id="messages">
+    </ul>
+    <form>
+        <label for="message">Message:</label>
+        <input type="text" id="message" placeholder="Your message" />
+    </form>
+    <details>
+        <summary>Help</summary>
+        <p>Here are a few things Calibot can do:</p>
+        <dl>
+            <dt>like URL</dt>
+            <dd>Publishes a like to your website.</dd>
+            <dt>bookmark URL</dt>
+            <dd>Publishes a bookmark to your website.</dd>
+            <dt>tell me a joke</dt>
+            <dd>Cali will tell you a joke.</dd>
+            <dt>hello</dt>
+            <dd>Cali will say hello.</dd>
+            <dt>indieweb++</dt>
+            <dd>Cali will add 1 karma to "indieweb".</dd>
+            <dt>indieweb--</dt>
+            <dd>Cali will remove 1 karma from "indieweb".</dd>
+        </dl>
+    </details>
+    <script>
+        var textarea = document.getElementById("message");
+        var messages = document.getElementById("messages");
+
+        textarea.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                var to_send = "[{{ session.get('me') }}]: " + textarea.value.replace(/(\r\n|\n|\r)/gm, "");
+                socket.send(to_send);
+                textarea.value = "";
+            }
+        });
+    </script>
+</section>
+{% endblock %}

@@ -46,6 +46,12 @@ After setting up the config.py file, you are ready to run the bot. You can do so
     export FLASK_APP=cali.py
     flask run
 
+## Web Socket Exploration
+
+Cali has the capacity to interact over a web socket. An example websocket server is provided in the `websocket.py` file. Please note the websocket server uses ws:// rather than wss:// so the server is not recommended for use outside of testing environments. This feature was built to explore a web page where one could interact with Cali (see the `templates/chat.html` file for how the chat interface was coded).
+
+There is no official support for interacting with the Cali bot using web sockets.
+
 ## Dependencies
 
 This project relies on the following libraries:
