@@ -25,13 +25,13 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    elif str(message.author).strip() != DISCORD_USERNAME:
+    elif str(message.author).strip() != DISCORD_USERNAME.strip("@"):
         return
 
     to_send = process_command(message.content, karma)
 
     # make cali feel more human-like by delaying messages
-    random_number = random.randint(3, 15)
+    random_number = random.randint(2, 6)
 
     time.sleep(random_number)
 

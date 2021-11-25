@@ -1,11 +1,26 @@
-from config import MICROPUB_URL, ACCESS_TOKEN
+from config import MICROPUB_URL, ACCESS_TOKEN, WIKI_API_KEY
 from bs4 import BeautifulSoup
 import datetime
 import requests
 import random
 
+def send_to_wiki(message):
+	# send definition to wiki
+	headers = {
+		"Authorization": WIKI_API_KEY
+	}
+
+	data = {
+		"description": message
+	}
+
+	r = requests.post("https://wiki.jamesg.blog/ping", headers=headers, data=data)
+
+	print(r)
+
 def process_command(message, day_karma):
 	# convert to lowercase so responses are parsed consistently
+	original_message = message
 	message = message.lower()
 
 	if message.startswith("ping"):
@@ -61,6 +76,12 @@ def process_command(message, day_karma):
 				return message
 		else:
 			return "error"
+	elif "is" in message.split(" "):
+		send_to_wiki(original_message)
+	elif " << " in message:
+		send_to_wiki(original_message)
+	elif " < " in message:
+		send_to_wiki(original_message)
 	elif message.startswith("searchj"):
 		r = requests.get('https://indieweb-search.jamesg.blog/results?query=site:"jamesg.blog"%20{}&serp_as_json=results_page'.format(message))
 
