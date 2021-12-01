@@ -14,7 +14,7 @@ def send_to_wiki(message):
 		"description": message
 	}
 
-	r = requests.post("https://wiki.jamesg.blog/ping", headers=headers, data=data)
+	requests.post("https://wiki.jamesg.blog/ping", headers=headers, data=data)
 
 command_reference = """
 Here are some of the main commands you can use:
