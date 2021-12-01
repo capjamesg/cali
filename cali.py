@@ -1,10 +1,14 @@
 from process_command import process_command
 from config import *
+import logging
 import discord
 import random
 import time
 import json
 import os
+
+# configure log file
+logging.basicConfig(level=logging.INFO, filename="cali.log", format="%(asctime)s %(message)s")
 
 # if karma.json does not exist, create it
 if not os.path.exists("karma.json"):
@@ -28,12 +32,17 @@ async def on_message(message):
     elif str(message.author).strip() != DISCORD_USERNAME.strip("@"):
         return
 
+    logging.info("Received message")
+    logging.info(message)
+
     to_send = process_command(message.content, karma)
 
     # make cali feel more human-like by delaying messages
     random_number = random.randint(2, 6)
 
     time.sleep(random_number)
+
+    logging.info("Sending message: " + to_send)
 
     # consider tagging user in all messages with DISCORD_USERNAME + " "
     await message.channel.send(to_send)

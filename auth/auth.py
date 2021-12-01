@@ -116,7 +116,12 @@ def discover_auth_endpoint():
 
     session["state"] = state
 
-    return redirect(authorization_endpoint["href"] + "?client_id=" + CLIENT_ID + "&redirect_uri=" + CALLBACK_URL + "&scope=create profile&response_type=code&code_challenge=" + code_challenge + "&code_challenge_method=S256&state=" + state)
+    return redirect(
+        authorization_endpoint["href"] + "?client_id=" +
+        CLIENT_ID + "&redirect_uri=" + CALLBACK_URL +
+        "&scope=create profile&response_type=code&code_challenge=" + code_challenge +
+        "&code_challenge_method=S256&state=" + state
+    )
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():

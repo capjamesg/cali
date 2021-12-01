@@ -1,4 +1,4 @@
-from config import MICROPUB_URL, ACCESS_TOKEN, WIKI_API_KEY
+from config import MICROPUB_URL, ACCESS_TOKEN, WIKI_API_KEY, MICROSUB_URL, MICROSUB_API_TOKEN
 from bs4 import BeautifulSoup
 import datetime
 import requests
@@ -16,7 +16,27 @@ def send_to_wiki(message):
 
 	r = requests.post("https://wiki.jamesg.blog/ping", headers=headers, data=data)
 
-	print(r)
+command_reference = """
+Here are some of the main commands you can use:
+
+ping - ping the bot
+search - run a search on IndieWeb Search
+what's X - find a a result from IndieWeb Search that answers your question (if available)
+Wiki << https://jamesg.blog - adds the specified URL to the jamesg.blog "Wiki" wiki page
+searchj - search jamesg.blog
+coffee - receive a coffee response
+X or Y - get a random response from the list of responses
+tell me a joke - see an xkcd comic
+flip a coin - heads or tails?
+time - get the time
+!christmas / !halloween - get days until christmas or halloween
+post / like / bookmark / repost / poke / reply / react/ yo X - post something on jamesg.blog
+X is Y - define X as Y on the jamesg.blog wiki
+cali++ - add 1 karma to cali
+cali-- - subtract 1 karma from cali
+cali karma - see "cali" karma
+how are you - find out how cali is doing
+"""
 
 def process_command(message, day_karma):
 	# convert to lowercase so responses are parsed consistently
@@ -25,6 +45,20 @@ def process_command(message, day_karma):
 
 	if message.startswith("ping"):
 		return "pong"
+	elif (message.startswith("help") or message.startswith("man")) and len(message.split(" ")) < 2:
+		return command_reference
+	elif message.startswith("random"):
+		first_number = int(message.split(" ")[1])
+		second_number = int(message.split(" ")[2])
+
+		if first_number.isnumeric() and second_number.isnumeric():
+			return random.randint(first_number, second_number)
+	elif message.endswith("karma"):
+		target = message.split(" ")[0]
+
+		karma = day_karma.get(target, 0)
+
+		return "{} has {} karma".format(target, karma)
 	elif "++" in message or "--" in message:
 		get_plus_plus_target = message.split(" ")
 
@@ -42,8 +76,6 @@ def process_command(message, day_karma):
 
 		todays_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-		# reset karma every day
-
 		if target:
 			if day_karma.get(target[0]):
 				if "++" in original_target:
@@ -60,7 +92,7 @@ def process_command(message, day_karma):
 
 	elif message.startswith("search "):
 		return "https://indieweb-search.jamesg.blog/results?query=" + message.replace("search ", "").replace(" ", "%20")
-	elif message.startswith("what is "):
+	elif message.startswith("what's "):
 		r = requests.get("https://indieweb-search.jamesg.blog/results?query={}&serp_as_json=direct".format(message.replace("what is ", "").replace(" ", "%20")))
 
 		if r.status_code == 200:
@@ -121,6 +153,20 @@ def process_command(message, day_karma):
 		choose = random.choice(message.split(" or "))
 		preamble = ["definitely ", "for sure ", ""]
 		return "{}{}".format(random.choice(preamble), choose)
+	elif message.startswith("time"):
+		return datetime.datetime.now().strftime("%I:%M %p")
+	elif message.startswith("!christmas"):
+		christmas_date = datetime.datetime(year=datetime.datetime.now().year, month=12, day=25)
+
+		delta = christmas_date - datetime.datetime.now()
+
+		return "christmas is in {} days".format(delta.days)
+	elif message.startswith("!halloween"):
+		halloween_date = datetime.datetime(year=datetime.datetime.now().year, month=10, day=31)
+
+		delta = halloween_date - datetime.datetime.now()
+
+		return "halloween is in {} days".format(delta.days)
 	elif "make" and "coffee" in message:
 		coffee_origins = ["ethiopia", "guatemala", "columbia", "kenya", "china"]
 		brewing_devices = ["an aeropress", "the chemex", "an espresso machine", "a kalita wave", "a v60"]
@@ -140,6 +186,31 @@ def process_command(message, day_karma):
 			return message + " " + random.choice(weather)
 
 		return random.choice(responses)
+
+	elif message.startswith("subscribe "):
+		if len(message.replace("subscribe ", "").split(" ")) >= 2:
+			channel = message.replace("subscribe ", "").split(" ")[0]
+		else:
+			channel = "indiewebnaw"
+
+		url = message.split(" ")[-1]
+
+		data = {
+			"action": "follow",
+			"channel": channel,
+			"url": url
+		}
+
+		headers = {
+			"Authorization": "Bearer {}".format(MICROSUB_API_TOKEN)
+		}
+
+		r = requests.post(MICROSUB_URL, data=data, headers=headers)
+
+		if r.status_code == 200:
+			return "subscribed to {}".format(url)
+		else:
+			return "there was an error subscribing to {}".format(url)
 
 	elif message.startswith("post"):
 		message_to_send_to_client = make_micropub_request("h-entry", message, "Note")
