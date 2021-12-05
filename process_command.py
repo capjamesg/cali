@@ -1,8 +1,10 @@
-from config import MICROPUB_URL, ACCESS_TOKEN, WIKI_API_KEY, MICROSUB_URL, MICROSUB_API_TOKEN
+from config import MICROPUB_URL, ACCESS_TOKEN, WIKI_API_KEY, MICROSUB_URL, MICROSUB_API_TOKEN, WEBMENTION_WEBHOOK_KEY
 from bs4 import BeautifulSoup
+from .remind import process_reminder
 import datetime
 import requests
 import random
+import csv
 
 def send_to_wiki(message):
 	# send definition to wiki
@@ -36,6 +38,10 @@ cali++ - add 1 karma to cali
 cali-- - subtract 1 karma from cali
 cali karma - see "cali" karma
 how are you - find out how cali is doing
+!remind me to [do something] at [time] on [date] - set a reminder to do something at a certain time / date
+!remind all - see reminders
+!services - returns a link to my list of services
+!send - send all webmentions on a page
 """
 
 def process_command(message, day_karma):
@@ -114,6 +120,10 @@ def process_command(message, day_karma):
 		send_to_wiki(original_message)
 	elif " < " in message:
 		send_to_wiki(original_message)
+	elif message.startswith("!send"):
+		r = requests.get("https://webmention.jamesg.blog/webhook?key=instagram.com/{}&url={}".format(WEBMENTION_WEBHOOK_KEY, message.split(" ")[1]))
+
+		return r.json()["message"]
 	elif message.startswith("searchj"):
 		r = requests.get('https://indieweb-search.jamesg.blog/results?query=site:"jamesg.blog"%20{}&serp_as_json=results_page'.format(message))
 
@@ -167,6 +177,21 @@ def process_command(message, day_karma):
 		delta = halloween_date - datetime.datetime.now()
 
 		return "halloween is in {} days".format(delta.days)
+	elif message.startswith("!remind all"):
+		with open("reminders.csv", "r") as f:
+			reader = csv.reader(f)
+			reminders = list(reader)
+
+		message = "reminders:\n" + "\n".join(reminders)
+
+		return message
+	elif message.startswith("!remind"):
+		# still in development
+		reminder = process_reminder(message)
+
+		return reminder
+	elif message == "!services":
+		return "https://wiki.jamesg.blog/services"
 	elif "make" and "coffee" in message:
 		coffee_origins = ["ethiopia", "guatemala", "columbia", "kenya", "china"]
 		brewing_devices = ["an aeropress", "the chemex", "an espresso machine", "a kalita wave", "a v60"]

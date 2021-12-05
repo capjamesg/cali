@@ -10,6 +10,10 @@ Cali can, among other things:
 - Let me post content to my website
 - Listen for requests to a HTTP server and relay the message via IRC
 
+## Screenshot
+
+![Calibot home page](screenshot.png)
+
 ## Getting Started
 
 Cali has two components:
