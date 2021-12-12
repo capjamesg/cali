@@ -1,12 +1,12 @@
 from config import WIKI_API_KEY, MICROSUB_URL, MICROSUB_API_TOKEN, WEBMENTION_WEBHOOK_KEY, WOLFRAM_API_ID, GIPHY_API_KEY, DICTIONARY_API_KEY
 from bs4 import BeautifulSoup
 import command_references
+import list_commands
 import datetime
 import micropub
 import requests
 import psutil
 import random
-import lists
 import json
 import csv
 
@@ -485,7 +485,7 @@ CPU count: {}
     while response is None:
         response = check_for_map_commands(message, shortcuts)
         response = karma_operations(message, day_karma)
-        response = lists.check_for_list_command(message)
+        response = list_commands.check_for_list_command(message)
         response = micropub.check_for_micropub_command(message)
 
         response = ""
