@@ -1,4 +1,4 @@
-from flask import request, session, abort
+from flask import session, abort
 import requests
 
 def validate_scope(scope, granted_scope_list):

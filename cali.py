@@ -19,6 +19,16 @@ else:
     with open("karma.json", 'r') as f:
         karma = json.load(f)
 
+# create shortcuts.json and lists.json file sif necessary
+
+if not os.path.exists("shortcuts.json"):
+    with open("shortcuts.json", 'w+') as f:
+        f.write('{}')
+
+if not os.path.exists("lists.json"):
+    with open("shortcuts.json", 'w+') as f:
+        f.write('{}')
+
 client = discord.Client()
 
 @client.event
@@ -37,15 +47,11 @@ async def on_message(message):
 
     to_send = process_command(message.content, karma)
 
-    # make cali feel more human-like by delaying messages
-    random_number = random.randint(2, 6)
-
-    time.sleep(random_number)
-
     logging.info("Sending message: " + to_send)
 
     # consider tagging user in all messages with DISCORD_USERNAME + " "
-    await message.channel.send(to_send)
+    if to_send != "":
+        await message.channel.send(to_send)
 
 if __name__ == '__main__':
 	client.run(DISCORD_BOT_TOKEN)
