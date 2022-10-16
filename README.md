@@ -69,7 +69,7 @@ Please note that discord.py is no longer maintained by its author. This project 
 
 ## License
 
-This project is licensed under the MIT license.
+This project is licensed under the MIT 0 license.
 
 ## Maintainers
 
